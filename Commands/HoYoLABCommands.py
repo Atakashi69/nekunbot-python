@@ -1,6 +1,5 @@
 import asyncio
 import math
-import os
 import random
 
 import discord
@@ -11,7 +10,6 @@ import genshin
 from motor.motor_asyncio import AsyncIOMotorClient
 
 import Constants
-from MyBot import MyBot
 
 
 class HoYoLABCommands(commands.Cog):
@@ -278,7 +276,7 @@ async def db_set_cookies(motorClient: AsyncIOMotorClient, discordID: int, UID: i
         'UID': UID,
         'cookie': cookie
     }
-    await motorClient['myFirstDatabase']['user-uid'].replace_one(filter=query_filter, replacement=query, upsert=True)
+    await motorClient[Constants.db_name]['hoyolab_cookies'].replace_one(filter=query_filter, replacement=query, upsert=True)
 
 
 async def db_get_cookies(motorClient: AsyncIOMotorClient, discordID: int, UID: int):
@@ -289,7 +287,7 @@ async def db_get_cookies(motorClient: AsyncIOMotorClient, discordID: int, UID: i
     else:
         return None, None
 
-    entry = await motorClient['myFirstDatabase']['user-uid'].find_one(query)
+    entry = await motorClient[Constants.db_name]['hoyolab_cookies'].find_one(query)
     if not entry:
         return None, None, Constants.error_messages.auth_fail
     return entry['UID'], entry['cookie'], None

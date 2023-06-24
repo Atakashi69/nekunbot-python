@@ -6,11 +6,11 @@ from Utils.HoYoLABParser import HoYoLABParser
 
 
 class MyBot(commands.Bot):
-    def __init__(self):
+    def __init__(self, motorClient):
         intents = discord.Intents.default()
         intents.message_content = True
 
-        self.parser = HoYoLABParser(self)
+        self.hoyolab_parser = HoYoLABParser(self, motorClient)
 
         super().__init__(
             command_prefix=Constants.prefix,
@@ -26,7 +26,7 @@ class MyBot(commands.Bot):
 
     @tasks.loop(minutes=10)
     async def bg_parse_hoyolab(self):
-        await self.parser.parse_hoyolab()
+        await self.hoyolab_parser.parse_hoyolab()
 
     @bg_parse_hoyolab.before_loop
     async def before_parse_hoyolab(self):
