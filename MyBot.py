@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 
-import Constants
+from Utils import Constants
 from Utils.HoYoLABParser import HoYoLABParser
 
 

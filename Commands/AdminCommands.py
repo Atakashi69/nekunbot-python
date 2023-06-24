@@ -2,7 +2,7 @@ import os
 
 from discord.ext import commands
 
-import Constants
+from Utils import Constants
 
 
 class AdminCommands(commands.Cog):

@@ -9,7 +9,7 @@ from discord.ext import commands
 import genshin
 from motor.motor_asyncio import AsyncIOMotorClient
 
-import Constants
+from Utils import Constants
 
 
 class HoYoLABCommands(commands.Cog):

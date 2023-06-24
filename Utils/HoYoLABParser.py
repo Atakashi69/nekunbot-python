@@ -3,7 +3,7 @@ import motor.motor_asyncio
 from discord.ext import commands
 from playwright.async_api import async_playwright, Page
 
-import Constants
+from Utils import Constants
 
 
 class HoYoLABParser:
