@@ -1,1 +1,11 @@
 /.env
+/.config
+/.git
+/.replit
+/replit.nix
+/poetry.lock
+/pyproject.toml
+/__pycache__
+/Commands/__pycache__
+/Utils/__pycache__
+/venv
