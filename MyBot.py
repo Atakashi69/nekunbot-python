@@ -14,6 +14,7 @@ class MyBot(commands.Bot):
 
         super().__init__(
             command_prefix=Constants.prefix,
+            case_insensitive=True,
             intents=intents
         )
 
