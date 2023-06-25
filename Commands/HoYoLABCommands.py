@@ -184,7 +184,7 @@ def get_resin_msg(uid, notes):
 
     msg = f'[{uid}]\n' \
           f':crescent_moon: Смола: {notes.current_resin}/{notes.max_resin}' \
-          f'{" :bangbang:" if resin_full else (chr(10)+":clock3: До полного восстановленния: "+notes.remaining_resin_recovery_time)}'
+          f'{" :bangbang:" if resin_full else (chr(10)+":clock3: До полного восстановленния: "+str(notes.remaining_resin_recovery_time))}'
 
     return msg
 
@@ -203,7 +203,7 @@ def get_notes_msg(uid, notes):
     msg = f'[{uid}]\n' \
           f':notebook_with_decorative_cover: **Игровые заметки**\n' \
           f':crescent_moon: Смола: {notes.current_resin}/{notes.max_resin}' \
-          f'{" :bangbang:" if resin_full else (chr(10)+":clock3: До полного восстановленния: "+notes.remaining_resin_recovery_time)}\n' \
+          f'{" :bangbang:" if resin_full else (chr(10)+":clock3: До полного восстановленния: "+str(notes.remaining_resin_recovery_time))}\n' \
           f':date: Выполнено поручений: {notes.completed_commissions}/{notes.max_commissions}, ' \
           f'доп. награда {"собрана :white_check_mark:" if notes.claimed_commission_reward else "не собрана :x:"}\n' \
           f':money_with_wings: Скидки на боссов: {notes.remaining_resin_discounts}\n' \
