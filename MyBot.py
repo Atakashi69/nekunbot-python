@@ -13,7 +13,7 @@ class MyBot(commands.Bot):
         self.hoyolab_parser = HoYoLABParser(self, motorClient)
 
         super().__init__(
-            command_prefix=Constants.prefix,
+            command_prefix=[Constants.prefix.lower(), Constants.prefix.upper()],
             case_insensitive=True,
             intents=intents
         )
