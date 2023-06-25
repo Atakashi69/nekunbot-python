@@ -19,8 +19,8 @@ class AdminCommands(commands.Cog):
         if str(ctx.author.id) != os.getenv('OWNER_ID'):
             await ctx.reply(Constants.error_messages.not_my_master)
             return
-        cmds = await ctx.bot.tree.sync()
-        await ctx.reply(f'Synced {len(cmds)} commands')
+        cmds = await self.bot.tree.sync()
+        await ctx.reply(f'Синхронизировано {len(cmds)} команды')
 
     @commands.command()
     async def gnews(self, ctx: commands.Context, *args):
