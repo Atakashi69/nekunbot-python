@@ -12,8 +12,8 @@ from Commands.HoYoLABCommands import HoYoLABCommands
 
 async def setup() -> None:
     load_dotenv()
-    motorClient = motor.motor_asyncio.AsyncIOMotorClient(os.getenv('MONGO_URI'))
     keep_alive()
+    motorClient = motor.motor_asyncio.AsyncIOMotorClient(os.getenv('MONGO_URI'))
     client = MyBot(motorClient)
     await client.add_cog(AdminCommands(client, motorClient))
     await client.add_cog(HoYoLABCommands(client, motorClient))
