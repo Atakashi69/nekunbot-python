@@ -19,7 +19,7 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
         print('Hooked')
-        self.bg_parse_hoyolab.start()
+        # self.bg_parse_hoyolab.start()
 
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')

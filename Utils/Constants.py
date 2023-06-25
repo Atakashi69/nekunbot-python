@@ -1,4 +1,4 @@
-prefix = '?'
+prefix = 'n!'
 name = 'nekunbot'
 pfp_url = 'https://i.imgur.com/IxhdzsB.png'
 db_name = 'nekunbot_db'
