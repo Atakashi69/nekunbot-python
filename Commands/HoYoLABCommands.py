@@ -180,14 +180,18 @@ def args_check(args, authorID: int):
 
 
 def get_resin_msg(uid, notes):
+    resin_full = (notes.current_resin == notes.max_resin)
+
     msg = f'[{uid}]\n' \
-          f':crescent_moon: Смола: {notes.current_resin}/{notes.max_resin}\n' \
-          f':clock3: До полного восстановленния: {notes.remaining_resin_recovery_time}'
+          f':crescent_moon: Смола: {notes.current_resin}/{notes.max_resin}' \
+          f'{" :bangbang:" if resin_full else (chr(10)+":clock3: До полного восстановленния: "+notes.remaining_resin_recovery_time)}'
 
     return msg
 
 
 def get_notes_msg(uid, notes):
+    resin_full = (notes.current_resin == notes.max_resin)
+
     realm_currency_recovery_time_ru = translate_timedelta(notes.remaining_realm_currency_recovery_time)
     realm_full = realm_currency_recovery_time_ru == ''
 
@@ -198,15 +202,15 @@ def get_notes_msg(uid, notes):
 
     msg = f'[{uid}]\n' \
           f':notebook_with_decorative_cover: **Игровые заметки**\n' \
-          f':crescent_moon: Смола: {notes.current_resin}/{notes.max_resin}\n' \
-          f':clock3: До полного восстановленния: {notes.remaining_resin_recovery_time}\n' \
+          f':crescent_moon: Смола: {notes.current_resin}/{notes.max_resin}' \
+          f'{" :bangbang:" if resin_full else (chr(10)+":clock3: До полного восстановленния: "+notes.remaining_resin_recovery_time)}\n' \
           f':date: Выполнено поручений: {notes.completed_commissions}/{notes.max_commissions}, ' \
           f'доп. награда {"собрана :white_check_mark:" if notes.claimed_commission_reward else "не собрана :x:"}\n' \
           f':money_with_wings: Скидки на боссов: {notes.remaining_resin_discounts}\n' \
           f':moneybag: Сокровища обители: {notes.current_realm_currency}/{notes.max_realm_currency}' \
-          f'{" :bangbang:" if realm_full else (chr(10)+":clock3: До полного восстановленния: " + realm_currency_recovery_time_ru)}\n' \
+          f'{" :bangbang:" if realm_full else (chr(10)+":clock3: До полного восстановленния: "+realm_currency_recovery_time_ru)}\n' \
           f':recycle: Преобразователь: {"собран" if transformer else "не собран"}' \
-          f'{" :x:" if not transformer else (", будет готов через " + transformer_recovery_time_ru) + " :white_check_mark:"}\n' \
+          f'{" :x:" if not transformer else (", будет готов через " + transformer_recovery_time_ru)+" :white_check_mark:"}\n' \
           f':mag: Начато экспедиций: {len(notes.expeditions)}/{notes.max_expeditions}\n' \
           f'{expeditions_list}'
 
