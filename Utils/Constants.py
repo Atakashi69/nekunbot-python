@@ -5,6 +5,7 @@ db_name = 'nekunbot_db'
 
 class error_messages:
     unknown = ':x: Упс! Произошла какая-то ошибка. Обратитесь к администратору'
+    hyv_guilty = ':x: Упс! Произошла какая-то ошибка, но виноваты HoYoverse'
     not_my_master = ':rooster: Вы не мой владелец!'
     not_admin = ':spy: Вы не администратор!'
     timed_out = ':alarm_clock: Время вышло!'
