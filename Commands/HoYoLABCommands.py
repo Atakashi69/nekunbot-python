@@ -271,7 +271,7 @@ async def get_notes(genshinClient: genshin.Client, uid: int, cookie: str):
     except genshin.CookieException as e:
         print(e)
         return None, Constants.error_messages.invalid_cookie
-    except ValueError as e:
+    except Exception as e:
         print(e)
         return None, Constants.error_messages.hyv_guilty
 
