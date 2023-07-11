@@ -16,7 +16,7 @@ class HoYoLABCommands(commands.Cog):
     def __init__(self, bot: commands.Bot, motorClient: motor.motor_asyncio.AsyncIOMotorClient):
         self.bot = bot
         self.motorClient = motorClient
-        self.genshinClient = genshin.Client(lang='ru-ru', game=genshin.Game.GENSHIN, debug=True)
+        self.genshinClient = genshin.Client(lang='ru-ru', game=genshin.Game.GENSHIN)
 
     @commands.Cog.listener()
     async def on_ready(self):
