@@ -16,7 +16,7 @@ class HoYoLABCommands(commands.Cog):
     def __init__(self, bot: commands.Bot, motorClient: motor.motor_asyncio.AsyncIOMotorClient):
         self.bot = bot
         self.motorClient = motorClient
-        self.genshinClient = genshin.Client(lang='ru-ru', game=genshin.Game.GENSHIN)
+        self.genshinClient = genshin.Client(lang='ru-ru', game=genshin.Game.GENSHIN, debug=True)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -220,11 +220,12 @@ def get_notes_msg(uid, notes):
 def get_expeditions_list(expeditions):
     results = []
     for expedition in expeditions:
+        print(expedition)
         if expedition.finished:
-            result = f'\t:pushpin: Завершена ({expedition.character.name})'
+            result = f'\t:pushpin: Завершена'
         else:
             emoji = f':clock{random.randint(1, 12)}:'
-            result = f'\t{emoji} Осталось времени: {expedition.remaining_time} ({expedition.character.name})'
+            result = f'\t{emoji} Осталось времени: {expedition.remaining_time}'
         results.append(result)
     return '\n'.join(results)
 
@@ -265,7 +266,8 @@ async def get_notes(genshinClient: genshin.Client, uid: int, cookie: str):
 
     genshinClient.set_cookies({'ltuid': ltuid, 'ltoken': ltoken})
     try:
-        return await genshinClient.get_genshin_notes(uid), None
+        notes = await genshinClient.get_genshin_notes(uid)
+        return notes, None
     except genshin.CookieException as e:
         print(e)
         return None, Constants.error_messages.invalid_cookie
