@@ -220,7 +220,6 @@ def get_notes_msg(uid, notes):
 def get_expeditions_list(expeditions):
     results = []
     for expedition in expeditions:
-        print(expedition)
         if expedition.finished:
             result = f'\t:pushpin: Завершена'
         else:
