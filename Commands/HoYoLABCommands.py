@@ -273,7 +273,7 @@ async def get_notes(genshinClient: genshin.Client, uid: int, cookie: str):
         return None, Constants.error_messages.invalid_cookie
     except Exception as e:
         print(e)
-        return None, Constants.error_messages.hyv_guilty
+        return None, Constants.error_messages.unknown
 
 
 async def db_set_cookies(motorClient: AsyncIOMotorClient, discordID: int, UID: int, cookie: str):
