@@ -153,6 +153,23 @@ class HoYoLABCommands(commands.Cog):
 
         await interaction.followup.send(msg)
 
+    @commands.command(name='noteshsr')
+    async def notes_hsr_normal(self, ctx: commands.Context):
+        discordID = ctx.author.id
+        uid = -1
+        uid, cookie, error_msg = await db_get_cookies(self.motorClient, discordID, uid)
+        if error_msg:
+            await ctx.reply(error_msg)
+            return
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.STARRAIL)
+        if error_msg:
+            await ctx.reply(error_msg)
+            return
+
+        msg = get_notes_msg_hsr(uid, notes)
+
+        await ctx.reply(msg)
+
     @app_commands.command(name='auth', description='Авторизует вас в системе')
     async def auth_slash(self, interaction: discord.Interaction):
         await interaction.response.defer()
