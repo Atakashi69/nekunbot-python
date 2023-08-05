@@ -16,7 +16,7 @@ class HoYoLABCommands(commands.Cog):
     def __init__(self, bot: commands.Bot, motorClient: motor.motor_asyncio.AsyncIOMotorClient):
         self.bot = bot
         self.motorClient = motorClient
-        self.genshinClient = genshin.Client(lang='ru-ru', game=genshin.Game.GENSHIN)
+        self.genshinClient = genshin.Client(lang='ru-ru')
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -33,7 +33,7 @@ class HoYoLABCommands(commands.Cog):
         if error_msg:
             await interaction.followup.send(error_msg)
             return
-        notes, error_msg = await get_notes(self.genshinClient, uid, cookie)
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.GENSHIN)
         if error_msg:
             await interaction.followup.send(error_msg)
             return
@@ -52,7 +52,7 @@ class HoYoLABCommands(commands.Cog):
         if error_msg:
             await ctx.reply(error_msg)
             return
-        notes, error_msg = await get_notes(self.genshinClient, uid, cookie)
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.GENSHIN)
         if error_msg:
             await ctx.reply(error_msg)
             return
@@ -72,12 +72,12 @@ class HoYoLABCommands(commands.Cog):
         if error_msg:
             await interaction.followup.send(error_msg)
             return
-        notes, error_msg = await get_notes(self.genshinClient, uid, cookie)
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.GENSHIN)
         if error_msg:
             await interaction.followup.send(error_msg)
             return
 
-        msg = get_notes_msg(uid, notes)
+        msg = get_notes_msg_gi(uid, notes)
 
         await interaction.followup.send(msg)
 
@@ -91,14 +91,67 @@ class HoYoLABCommands(commands.Cog):
         if error_msg:
             await ctx.reply(error_msg)
             return
-        notes, error_msg = await get_notes(self.genshinClient, uid, cookie)
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.GENSHIN)
         if error_msg:
             await ctx.reply(error_msg)
             return
 
-        msg = get_notes_msg(uid, notes)
+        msg = get_notes_msg_gi(uid, notes)
 
         await ctx.reply(msg)
+
+    @app_commands.command(name='power', description='Показывает текущее количество энергии освоения')
+    async def power_slash(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        discordID = interaction.user.id
+        uid = -1
+        uid, cookie, error_msg = await db_get_cookies(self.motorClient, discordID, uid)
+        if error_msg:
+            await interaction.followup.send(error_msg)
+            return
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.STARRAIL)
+        if error_msg:
+            await interaction.followup.send(error_msg)
+            return
+
+        msg = get_power_msg(uid, notes)
+
+        await interaction.followup.send(msg)
+
+    @commands.command(name='power')
+    async def power_normal(self, ctx: commands.Context):
+        discordID = ctx.author.id
+        uid = -1
+        uid, cookie, error_msg = await db_get_cookies(self.motorClient, discordID, uid)
+        if error_msg:
+            await ctx.reply(error_msg)
+            return
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.STARRAIL)
+        if error_msg:
+            await ctx.reply(error_msg)
+            return
+
+        msg = get_power_msg(uid, notes)
+
+        await ctx.reply(msg)
+
+    @app_commands.command(name='noteshsr', description='Показывает ваши игровые заметки')
+    async def notes_hsr_slash(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        discordID = interaction.user.id
+        uid = -1
+        uid, cookie, error_msg = await db_get_cookies(self.motorClient, discordID, uid)
+        if error_msg:
+            await interaction.followup.send(error_msg)
+            return
+        notes, error_msg = await get_notes(self.genshinClient, uid, cookie, genshin.Game.STARRAIL)
+        if error_msg:
+            await interaction.followup.send(error_msg)
+            return
+
+        msg = get_notes_msg_hsr(uid, notes)
+
+        await interaction.followup.send(msg)
 
     @app_commands.command(name='auth', description='Авторизует вас в системе')
     async def auth_slash(self, interaction: discord.Interaction):
@@ -179,8 +232,8 @@ def args_check(args, authorID: int):
     return discordID, uid, None
 
 
-def get_resin_msg(uid, notes):
-    resin_full = (notes.current_resin == notes.max_resin)
+def get_resin_msg(uid, notes: genshin.models.Notes):
+    resin_full = notes.current_resin == notes.max_resin
 
     msg = f'[{uid}]\n' \
           f':crescent_moon: Смола: {notes.current_resin}/{notes.max_resin}' \
@@ -189,8 +242,18 @@ def get_resin_msg(uid, notes):
     return msg
 
 
-def get_notes_msg(uid, notes):
-    resin_full = (notes.current_resin == notes.max_resin)
+def get_power_msg(uid, notes: genshin.models.StarRailNote):
+    power_full = notes.current_stamina == notes.max_stamina
+
+    msg = f'[{uid}]\n' \
+          f':rosette: Энергия: {notes.current_stamina}/{notes.max_stamina}' \
+          f'{" :bangbang:" if power_full else (chr(10)+":clock3: До полного восстановления: "+str(notes.stamina_recover_time))}'
+
+    return msg
+
+
+def get_notes_msg_gi(uid, notes: genshin.models.Notes):
+    resin_full = notes.current_resin == notes.max_resin
 
     realm_currency_recovery_time_ru = translate_timedelta(notes.remaining_realm_currency_recovery_time)
     realm_full = realm_currency_recovery_time_ru == ''
@@ -198,7 +261,7 @@ def get_notes_msg(uid, notes):
     transformer_recovery_time_ru = translate_transformer_timedelta(notes.remaining_transformer_recovery_time)
     transformer = transformer_recovery_time_ru != ''
 
-    expeditions_list = get_expeditions_list(notes.expeditions)
+    expeditions_list = get_expeditions_list_gi(notes.expeditions)
 
     msg = f'[{uid}]\n' \
           f':notebook_with_decorative_cover: **Игровые заметки**\n' \
@@ -217,7 +280,37 @@ def get_notes_msg(uid, notes):
     return msg
 
 
-def get_expeditions_list(expeditions):
+def get_notes_msg_hsr(uid, notes: genshin.models.StarRailNote):
+    power_full = notes.current_stamina == notes.max_stamina
+
+    expeditions_list = get_expeditions_list_hsr(notes.expeditions)
+
+    msg = f'[{uid}]\n' \
+          f':notebook_with_decorative_cover: **Игровые заметки**\n' \
+          f':rosette: Энергия: {notes.current_stamina}/{notes.max_stamina}' \
+          f'{" :bangbang:" if power_full else (chr(10)+":clock3: До полного восстановления: "+str(notes.stamina_recover_time))}\n' \
+          f':date: Ежедневная тренировка: {notes.current_train_score}/{notes.max_train_score}\n' \
+          f':money_with_wings: Эхо войны: {notes.remaining_weekly_discounts}/{notes.max_weekly_discounts}\n' \
+          f':game_die: Виртульная вселенная: {notes.current_rogue_score}/{notes.max_rogue_score}\n' \
+          f':mag: Начато экспедиций: {notes.accepted_epedition_num}/{notes.total_expedition_num}\n' \
+          f'{expeditions_list}'
+
+    return msg
+
+
+def get_expeditions_list_gi(expeditions):
+    results = []
+    for expedition in expeditions:
+        if expedition.finished:
+            result = f'\t:pushpin: Завершена'
+        else:
+            emoji = f':clock{random.randint(1, 12)}:'
+            result = f'\t{emoji} Осталось времени: {expedition.remaining_time}'
+        results.append(result)
+    return '\n'.join(results)
+
+
+def get_expeditions_list_hsr(expeditions):
     results = []
     for expedition in expeditions:
         if expedition.finished:
@@ -259,13 +352,16 @@ def translate_transformer_timedelta(transformer_timedelta):
     return result.strip()
 
 
-async def get_notes(genshinClient: genshin.Client, uid: int, cookie: str):
+async def get_notes(genshinClient: genshin.Client, uid: int, cookie: str, game: genshin.Game):
     ltuid = (cookie.partition('ltuid=')[-1]).partition(';')[0]
     ltoken = (cookie.partition('ltoken=')[-1]).partition(';')[0]
 
     genshinClient.set_cookies({'ltuid': ltuid, 'ltoken': ltoken})
     try:
-        notes = await genshinClient.get_genshin_notes(uid)
+        if game == genshin.Game.GENSHIN:
+            notes = await genshinClient.get_genshin_notes(uid)
+        else:
+            notes = await genshinClient.get_starrail_notes()
         return notes, None
     except genshin.CookieException as e:
         print(e)
